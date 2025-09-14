@@ -1,7 +1,5 @@
 package com.yizhaoqi.pairesume.config;
 
-import com.yizhaoqi.pairesume.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,81 +11,80 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Spring Security 的核心配置类
+ * <p>
+ * 通过 @EnableWebSecurity 注解开启了 Spring Security 的 Web 安全支持。
+ * 这个类定义了安全过滤链（SecurityFilterChain）、密码编码器（PasswordEncoder）、
+ * 身份验证管理器（AuthenticationManager）等核心组件，它们共同构成了应用的认证和授权策略。
+ */
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserRepository userRepository;
-
-    /**
-     * 配置密码加密器，使用 BCrypt 算法。
-     * Spring Security 会自动使用这个 Bean 来加密和校验密码。
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * 定义 UserDetailsService，用于从数据库根据用户名（邮箱）加载用户信息。
-     * 这是 Spring Security 进行身份认证的基础。
-     */
     @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("用户不存在: " + username));
-    }
-
-    /**
-     * 配置认证提供者 AuthenticationProvider。
-     * 它将 UserDetailsService（如何找用户）和 PasswordEncoder（如何比对密码）两者结合在一起。
-     */
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
+                                                         PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 
-    /**
-     * 暴露 AuthenticationManager 为 Bean。
-     * 这是认证流程的核心执行者，在登录接口中会用到。
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     /**
-     * 配置安全过滤链，定义所有HTTP请求的安全策略。
+     * 安全过滤链 Bean，定义了所有 HTTP 请求的安全策略。
+     * <p>
+     * 这是 Spring Security 配置的核心，通过链式调用来配置认证和授权规则。
+     *
+     * @param http                  HttpSecurity 对象，用于构建安全配置。
+     * @param authenticationProvider 之前定义的身份验证提供者。
+     * @param jwtAuthFilter         自定义的 JWT 认证过滤器。
+     * @return 构建好的 SecurityFilterChain 实例。
+     * @throws Exception 如果配置过程中发生错误。
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   AuthenticationProvider authenticationProvider,
+                                                   JwtAuthenticationFilter jwtAuthFilter) throws Exception {
         http
-                // 禁用 CSRF 防护，因为我们使用 JWT，它天然免疫 CSRF 攻击。
+                // 1. 禁用 CSRF（跨站请求伪造）保护。
+                // 由于我们使用 JWT 进行认证，每个请求都是无状态的，CSRF 保护变得非必需。
                 .csrf(AbstractHttpConfigurer::disable)
-                // 配置会话管理为无状态（STATELESS），因为我们不使用 Session。
+
+                // 2. 配置会话管理策略为无状态（STATELESS）。
+                // 这意味着服务器不会创建或维护任何 HttpSession，符合 RESTful API 的设计原则。
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 配置请求的授权规则。
+
+                // 3. 配置 HTTP 请求的授权规则。
                 .authorizeHttpRequests(auth -> auth
-                        // 允许对 /auth/ 下的所有接口（如注册、登录）进行匿名访问。
+                        // 对所有以 "/auth/" 开头的路径（如登录、注册）允许所有用户访问。
                         .requestMatchers("/auth/**").permitAll()
-                        // 除了上述明确允许的接口外，所有其他请求都必须经过认证。
+                        // 除了上述路径外，所有其他请求都必须经过身份验证。
                         .anyRequest().authenticated()
                 )
-                // 指定我们自定义的认证提供者。
-                .authenticationProvider(authenticationProvider())
-                // 在标准的 UsernamePasswordAuthenticationFilter 过滤器之前，添加我们的 JWT 认证过滤器。
-                // 这确保了每个需要认证的请求都会先经过 JWT 的校验。
+
+                // 4. 设置身份验证提供者。
+                // 当需要进行身份验证时，Spring Security 会使用这个 Provider。
+                .authenticationProvider(authenticationProvider)
+
+                // 5. 添加自定义的 JWT 认证过滤器。
+                // 这个过滤器会在 UsernamePasswordAuthenticationFilter 之前执行，
+                // 用于解析 JWT、验证签名，并将用户信息设置到 SecurityContext 中。
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
