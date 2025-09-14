@@ -3,12 +3,13 @@ spring:
     name: PaiResume
   # datasource config
   datasource:
-    url: jdbc:mysql://localhost:3306/pai_resume?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/pairesume?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456 # change to your database password
     driver-class-name: com.mysql.cj.jdbc.Driver
   # jpa config
   jpa:
+    open-in-view: false # 推荐设置为 false，以关闭 OSIV 模式，避免潜在的性能问题
     hibernate:
       ddl-auto: update # 开发环境使用 update，生产环境建议使用 none 或 validate
     show-sql: true
