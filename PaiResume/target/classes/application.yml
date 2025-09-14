@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: PaiResume
+  # datasource config
+  datasource:
+    url: jdbc:mysql://localhost:3306/pai_resume?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456 # change to your database password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # jpa config
+  jpa:
+    hibernate:
+      ddl-auto: update # 开发环境使用 update，生产环境建议使用 none 或 validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  # redis config
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: # change to your redis password if any
+      database: 0
+  # mail config
+  mail:
+    host: smtp.example.com # todo: change to your mail server
+    port: 587
+    username: your_email@example.com # todo: change to your email username
+    password: your_email_password # todo: change to your email password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# custom config
+app:
+  jwt:
+    secret: "jK3r9m8sT2pQvX4zW1bC0uV7nL6fR5eH8yZ9aBqM3tF4gS0u666"
+    access-token-expiration-ms: 1800000 # 30 minutes
+    refresh-token-expiration-ms: 604800000 # 7 days

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2102e6be-adc2-424c-8fcc-dd00e120c535" name="更改" comment="更改">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/settings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/docs/登录方案.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/constant/JwtConstants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/constant/RedisKeys.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/domain/R.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/exception/ServiceException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/utils/BeanUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/utils/JwtUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/common/utils/RedisUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/config/JwtAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/config/RedisConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/config/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/EmailSendCodeDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/EmailVerifyDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/LoginDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/PasswordForgotDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/PasswordResetDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/RefreshTokenDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/RegisterDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/dto/UserUpdateProfileDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/entity/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/repository/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/service/IAuthService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/service/IUserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/java/com/yizhaoqi/pairesume/vo/UserInfoVO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PaiResume/target/classes/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PaiResume/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/PaiResume/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PaiResume/src/main/resources/application.properties" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Lanyilei-art&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/itwanger/PaiJianli.git&quot;,
+    &quot;accountId&quot;: &quot;9a53b372-5035-4e3c-ae68-b0f480c544a3&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="32g1QfG2W4Y4ad3Na4XenmUwe0v" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "backend",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/lan/IdeaProjects/PaiJianli",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql_aurora"
+    ],
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "PLAIN_TEXT"
+    ]
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="PaiResumeApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="PaiResume" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.yizhaoqi.pairesume.PaiResumeApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-IU-252.25557.131" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="2102e6be-adc2-424c-8fcc-dd00e120c535" name="更改" comment="" />
+      <created>1757827386966</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1757827386966</updated>
+      <workItem from="1757827388256" duration="191000" />
+      <workItem from="1757827593852" duration="5581000" />
+      <workItem from="1757853121965" duration="569000" />
+      <workItem from="1757853703353" duration="211000" />
+      <workItem from="1757853917126" duration="22000" />
+      <workItem from="1757853941425" duration="103000" />
+      <workItem from="1757854069620" duration="956000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
