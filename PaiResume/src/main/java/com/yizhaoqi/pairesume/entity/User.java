@@ -37,6 +37,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
+    private Boolean systemEmailSubscribe = true;
+
+    private Boolean serviceEmailSubscribe = true;
+
     private String nickname;
 
     private String avatar;
