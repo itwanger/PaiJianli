@@ -26,7 +26,7 @@ spring:
       database: 0
   # mail config
   mail:
-    host: smtp.example.com # todo: change to your mail server
+    host: smtp.qq.com # todo: change to your mail server
     port: 587
     username: your_email@example.com # todo: change to your email username
     password: your_email_password # todo: change to your email password

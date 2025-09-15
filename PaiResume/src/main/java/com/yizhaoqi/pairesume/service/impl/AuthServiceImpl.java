@@ -45,6 +45,9 @@ public class AuthServiceImpl implements IAuthService {
     @Value("${app.jwt.refresh-token-expiration-ms}")
     private long refreshTokenExpirationMs;
 
+    @Value("${spring.mail.username}")
+    private String emailFrom;
+
     @Override
     public void register(RegisterDTO registerDTO) {
         // 1. 检查邮箱是否已存在
@@ -128,7 +131,7 @@ public class AuthServiceImpl implements IAuthService {
 
         // 5. 发送邮件
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("your_email@example.com"); // TODO: 从配置文件读取
+        message.setFrom(emailFrom);
         message.setTo(email);
         message.setSubject("【派简历】邮箱激活验证码");
         message.setText("您的激活验证码是：" + code + "，有效期为5分钟。");
