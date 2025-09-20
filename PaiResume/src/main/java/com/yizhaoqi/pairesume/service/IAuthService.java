@@ -28,6 +28,14 @@ public interface IAuthService {
     Map<String, String> login(LoginDTO loginDTO);
 
     /**
+     * 管理员登录
+     *
+     * @param loginDTO 登录信息
+     * @return 包含 access_token 和 refresh_token 的 Map
+     */
+    Map<String, String> adminLogin(LoginDTO loginDTO);
+
+    /**
      * 发送邮箱验证码
      *
      * @param emailSendCodeDTO 包含邮箱信息的 DTO

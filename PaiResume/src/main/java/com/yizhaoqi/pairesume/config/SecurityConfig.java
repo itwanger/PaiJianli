@@ -72,9 +72,15 @@ public class SecurityConfig {
 
                 // 3. 配置 HTTP 请求的授权规则。
                 .authorizeHttpRequests(auth -> auth
-                        // 对所有以 "/auth/" 开头的路径（如登录、注册）允许所有用户访问。
-                        .requestMatchers("/auth/**").permitAll()
-                        // 除了上述路径外，所有其他请求都必须经过身份验证。
+                        // 允许匿名访问的公共路径
+                        .requestMatchers(
+                                "/auth/**",
+                                "/admin/login",
+                                "/pay/callback"
+                        ).permitAll()
+                        // 需要 ADMIN 权限的路径
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        // 其他所有请求都需要认证
                         .anyRequest().authenticated()
                 )
 

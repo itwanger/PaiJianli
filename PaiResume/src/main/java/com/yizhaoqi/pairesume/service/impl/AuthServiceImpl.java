@@ -21,6 +21,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -107,6 +111,53 @@ public class AuthServiceImpl implements IAuthService {
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
+        return tokens;
+    }
+
+    @Override
+    public Map<String, String> adminLogin(LoginDTO loginDTO) {
+        // 1. 使用 Spring Security 的 AuthenticationManager 进行身份验证
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+            );
+        } catch (AuthenticationException e) {
+            // Assuming log is available, otherwise replace with System.err.println
+            // log.warn("Admin login failed for email: {}", loginDTO.getEmail(), e);
+            System.err.println("Admin login failed for email: " + loginDTO.getEmail() + ", error: " + e.getMessage());
+            throw new ServiceException("管理员邮箱或密码错误", 2003); // Assuming a specific error code for admin login failure
+        }
+
+        // 2. 将认证信息存入 SecurityContext
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 3. 从认证信息中获取 UserDetails
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new ServiceException("未找到管理员用户", 404));
+
+        // 4. 关键：校验用户角色是否为 ADMIN
+        if (user.getRole() != User.Role.ADMIN) {
+            // Assuming log is available, otherwise replace with System.err.println
+            // log.warn("Non-admin user attempted admin login: {}", user.getEmail());
+            System.err.println("Non-admin user attempted admin login: " + user.getEmail());
+            throw new ServiceException("非管理员用户，禁止登录", 2004); // Assuming a specific error code for non-admin admin login
+        }
+
+        // 5. 生成 JWT
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole().name());
+        String accessToken = jwtUtil.generateAccessToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+
+        // 6. 组装并返回 Token
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", accessToken);
+        tokens.put("refresh_token", refreshToken);
+
+        // Assuming log is available, otherwise remove this line
+        // log.info("Admin user {} logged in successfully.", user.getEmail());
         return tokens;
     }
 
