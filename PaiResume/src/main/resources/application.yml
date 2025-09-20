@@ -43,3 +43,14 @@ app:
     secret: "jK3r9m8sT2pQvX4zW1bC0uV7nL6fR5eH8yZ9aBqM3tF4gS0u666"
     access-token-expiration-ms: 1800000 # 30 minutes
     refresh-token-expiration-ms: 604800000 # 7 days
+
+# Alipay Configuration
+alipay:
+  app-id: 填写你的APP ID
+  private-key: 填写你的应用私钥
+  alipay-public-key: 填写你的支付宝公钥
+  server-url: https://openapi-sandbox.dl.alipaydev.com/gateway.do # 沙箱环境，生产环境需要修改
+  domain: http://localhost:8080 # 用于拼接回调地址
+  sign-type: RSA2
+  format: json
+  charset: utf-8
