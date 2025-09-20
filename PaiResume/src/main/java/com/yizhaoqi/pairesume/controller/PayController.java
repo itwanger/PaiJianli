@@ -3,21 +3,21 @@ package com.yizhaoqi.pairesume.controller;
 import com.yizhaoqi.pairesume.common.domain.R;
 import com.yizhaoqi.pairesume.common.enums.LogType;
 import com.yizhaoqi.pairesume.common.utils.JwtUtil;
+import com.yizhaoqi.pairesume.common.utils.RequestUtils;
 import com.yizhaoqi.pairesume.dto.PayCreateDTO;
 import com.yizhaoqi.pairesume.dto.PayCreateVO;
 import com.yizhaoqi.pairesume.dto.PayLogVO;
 import com.yizhaoqi.pairesume.dto.PayStatusVO;
 import com.yizhaoqi.pairesume.service.IPayService;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -35,16 +35,12 @@ public class PayController {
      */
     @PostMapping("/create")
     public R<PayCreateVO> createPayment(@RequestBody PayCreateDTO payCreateDTO, HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String accessToken = authHeader.substring(7);
-            Claims claims = jwtUtil.extractAllClaims(accessToken);
-            Long userId = Long.parseLong(claims.getSubject());
-            PayCreateVO paymentResult = payService.createPayment(payCreateDTO, userId);
-            return R.ok(paymentResult);
-        } else {
+        Optional<Long> userIdOptional = RequestUtils.getUserIdFromRequest(request, jwtUtil);
+        if (userIdOptional.isEmpty()) {
             return R.fail("未授权的访问");
         }
+        PayCreateVO paymentResult = payService.createPayment(payCreateDTO, userIdOptional.get());
+        return R.ok(paymentResult);
     }
 
     /**
@@ -71,16 +67,12 @@ public class PayController {
      */
     @GetMapping("/status")
     public R<PayStatusVO> getPaymentStatus(@RequestParam("pay_order_id") String payOrderId, HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String accessToken = authHeader.substring(7);
-            Claims claims = jwtUtil.extractAllClaims(accessToken);
-            Long userId = Long.parseLong(claims.getSubject());
-            PayStatusVO statusResult = payService.getPaymentStatus(payOrderId, userId);
-            return R.ok(statusResult);
-        } else {
+        Optional<Long> userIdOptional = RequestUtils.getUserIdFromRequest(request, jwtUtil);
+        if (userIdOptional.isEmpty()) {
             return R.fail("未授权的访问");
         }
+        PayStatusVO statusResult = payService.getPaymentStatus(payOrderId, userIdOptional.get());
+        return R.ok(statusResult);
     }
 
     /**
@@ -93,15 +85,11 @@ public class PayController {
     public R<List<PayLogVO>> getPaymentLogs(@RequestParam("pay_order_id") String payOrderId,
                                             @RequestParam(value = "log_type", required = false) LogType logType,
                                             HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String accessToken = authHeader.substring(7);
-            Claims claims = jwtUtil.extractAllClaims(accessToken);
-            Long userId = Long.parseLong(claims.getSubject());
-            List<PayLogVO> logsResult = payService.getPaymentLogs(payOrderId, logType, userId);
-            return R.ok(logsResult);
-        } else {
+        Optional<Long> userIdOptional = RequestUtils.getUserIdFromRequest(request, jwtUtil);
+        if (userIdOptional.isEmpty()) {
             return R.fail("未授权的访问");
         }
+        List<PayLogVO> logsResult = payService.getPaymentLogs(payOrderId, logType, userIdOptional.get());
+        return R.ok(logsResult);
     }
 }

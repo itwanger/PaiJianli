@@ -2,6 +2,7 @@ package com.yizhaoqi.pairesume.controller;
 
 import com.yizhaoqi.pairesume.common.domain.R;
 import com.yizhaoqi.pairesume.common.utils.JwtUtil;
+import com.yizhaoqi.pairesume.common.utils.RequestUtils;
 import com.yizhaoqi.pairesume.dto.SystemNotificationSendDTO;
 import com.yizhaoqi.pairesume.service.INotificationService;
 import com.yizhaoqi.pairesume.vo.NotificationVO;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin/notifications")
@@ -36,15 +39,11 @@ public class AdminController {
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public R<Void> sendSystemNotification(@RequestBody SystemNotificationSendDTO sendDTO, HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String accessToken = authHeader.substring(7);
-            Claims claims = jwtUtil.extractAllClaims(accessToken);
-            Long userId = Long.parseLong(claims.getSubject());
-            notificationService.sendSystemNotification(sendDTO, userId);
-            return R.ok();
-        } else {
+        Optional<Long> userId = RequestUtils.getUserIdFromRequest(request, jwtUtil);
+        if (userId.isEmpty()) {
             return R.fail("未授权的访问");
         }
+        notificationService.sendSystemNotification(sendDTO, userId.get());
+        return R.ok();
     }
 }

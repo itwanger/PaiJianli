@@ -7,6 +7,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * 支付日志表
+ */
 @Data
 @Entity
 @Table(name = "pay_log")

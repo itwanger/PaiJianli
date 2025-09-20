@@ -9,6 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 支付订单表
+ */
 @Data
 @Entity
 @Table(name = "pay_order")
@@ -18,9 +21,11 @@ public class PayOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //支付系统订单号
     @Column(name = "pay_order_id", nullable = false, unique = true, length = 64)
     private String payOrderId;
 
+    //业务系统订单号
     @Column(name = "biz_order_id", nullable = false, length = 64)
     private String bizOrderId;
 
@@ -40,6 +45,7 @@ public class PayOrder {
     @Column(name = "pay_channel", nullable = false, length = 32)
     private String payChannel = "alipay";
 
+    //业务系统回调地址
     @Column(name = "notify_url", length = 255)
     private String notifyUrl;
 
