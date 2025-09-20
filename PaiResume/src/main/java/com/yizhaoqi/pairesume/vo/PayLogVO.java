@@ -1,4 +1,4 @@
-package com.yizhaoqi.pairesume.dto;
+package com.yizhaoqi.pairesume.vo;
 
 import com.yizhaoqi.pairesume.common.enums.LogType;
 import lombok.Builder;

@@ -2,9 +2,9 @@ package com.yizhaoqi.pairesume.service;
 
 import com.yizhaoqi.pairesume.common.enums.LogType;
 import com.yizhaoqi.pairesume.dto.PayCreateDTO;
-import com.yizhaoqi.pairesume.dto.PayCreateVO;
-import com.yizhaoqi.pairesume.dto.PayLogVO;
-import com.yizhaoqi.pairesume.dto.PayStatusVO;
+import com.yizhaoqi.pairesume.vo.PayCreateVO;
+import com.yizhaoqi.pairesume.vo.PayLogVO;
+import com.yizhaoqi.pairesume.vo.PayStatusVO;
 
 import java.util.List;
 import java.util.Map;

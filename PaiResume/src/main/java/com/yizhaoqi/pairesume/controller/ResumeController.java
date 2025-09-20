@@ -3,12 +3,14 @@ package com.yizhaoqi.pairesume.controller;
 import com.yizhaoqi.pairesume.common.domain.R;
 import com.yizhaoqi.pairesume.dto.ResumeCreateDTO;
 import com.yizhaoqi.pairesume.dto.ResumeModuleCreateDTO;
+import com.yizhaoqi.pairesume.dto.ResumeModuleOptimizeDTO;
 import com.yizhaoqi.pairesume.dto.ResumeModuleUpdateDTO;
 import com.yizhaoqi.pairesume.entity.Resume;
 import com.yizhaoqi.pairesume.entity.ResumeModule;
 import com.yizhaoqi.pairesume.service.IResumeService;
 import com.yizhaoqi.pairesume.common.utils.JwtUtil;
 import com.yizhaoqi.pairesume.common.utils.RequestUtils;
+import com.yizhaoqi.pairesume.vo.ResumeModuleOptimizeVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -94,5 +96,29 @@ public class ResumeController {
         }
         resumeService.deleteResumeModule(resumeId, moduleId, userIdOptional.get());
         return R.ok();
+    }
+
+    @PostMapping("/{id}/modules/{moduleId}/optimize")
+    public R<ResumeModuleOptimizeVO> optimizeModule(
+            @PathVariable("id") Long resumeId,
+            @PathVariable("moduleId") Long moduleId,
+            @RequestBody ResumeModuleOptimizeDTO optimizeDTO,
+            HttpServletRequest request) {
+
+        Optional<Long> userIdOptional = RequestUtils.getUserIdFromRequest(request, jwtUtil);
+        if (userIdOptional.isEmpty()) {
+            return R.fail("未授权的访问");
+        }
+        Long userId = userIdOptional.get();
+
+        // 将所有参数传递给 Service 层
+        ResumeModuleOptimizeVO resultVO = resumeService.optimizeResumeModule(resumeId, moduleId, optimizeDTO, userId);
+
+        // 检查 Service 返回的结果
+        if (resultVO == null) {
+            return R.fail("AI服务繁忙，请稍后重试");
+        }
+
+        return R.ok(resultVO);
     }
 }

@@ -22,4 +22,6 @@ public interface ResumeModuleRepository extends JpaRepository<ResumeModule, Long
      * @param resumeId 简历ID
      */
     void deleteByResumeId(Long resumeId);
+
+    ResumeModule findByResumeIdAndModuleId(Long resumeId, Long moduleId);
 }

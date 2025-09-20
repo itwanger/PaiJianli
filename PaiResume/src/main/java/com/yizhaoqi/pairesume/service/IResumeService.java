@@ -5,6 +5,8 @@ import com.yizhaoqi.pairesume.dto.ResumeModuleCreateDTO;
 import com.yizhaoqi.pairesume.dto.ResumeModuleUpdateDTO;
 import com.yizhaoqi.pairesume.entity.Resume;
 import com.yizhaoqi.pairesume.entity.ResumeModule;
+import com.yizhaoqi.pairesume.dto.ResumeModuleOptimizeDTO;
+import com.yizhaoqi.pairesume.vo.ResumeModuleOptimizeVO;
 
 import java.util.List;
 
@@ -70,5 +72,13 @@ public interface IResumeService {
      */
     void deleteResumeModule(Long resumeId, Long moduleId, Long userId);
 
-    // AI 优化和导出 PDF 的方法可以后续添加
+    /**
+     * AI 优化简历模块
+     * @param resumeId 简历ID，用于权限校验
+     * @param moduleId 模块ID，用于权限校验
+     * @param optimizeDTO 包含待优化内容的DTO
+     * @param userId 当前用户ID
+     * @return 包含优化前后内容的VO，如果AI服务失败则返回null
+     */
+    ResumeModuleOptimizeVO optimizeResumeModule(Long resumeId, Long moduleId, ResumeModuleOptimizeDTO optimizeDTO, Long userId);
 }
