@@ -2,6 +2,7 @@ package com.yizhaoqi.pairesume.controller.admin;
 
 import com.yizhaoqi.pairesume.common.domain.R;
 import com.yizhaoqi.pairesume.dto.ReviseFeedbackSaveDTO;
+import com.yizhaoqi.pairesume.entity.ReviseTask;
 import com.yizhaoqi.pairesume.service.IReviseService;
 import com.yizhaoqi.pairesume.vo.AdminReviseTaskDetailVO;
 import jakarta.validation.Valid;
@@ -21,8 +22,8 @@ public class AdminReviseController {
     private final IReviseService reviseService;
 
     @GetMapping
-    public R<Page<Object>> getReviseTaskList(@RequestParam(required = false) Integer status,
-                                             @PageableDefault(sort = "createdAt,desc") Pageable pageable) {
+    public R<Page<ReviseTask>> getReviseTaskList(@RequestParam(required = false) Integer status,
+                                                 @PageableDefault(sort = "createdAt,desc") Pageable pageable) {
         return R.ok(reviseService.getReviseTaskList(status, pageable));
     }
 

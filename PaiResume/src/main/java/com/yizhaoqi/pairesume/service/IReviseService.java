@@ -2,6 +2,7 @@ package com.yizhaoqi.pairesume.service;
 
 import com.yizhaoqi.pairesume.dto.ReviseFeedbackSaveDTO;
 import com.yizhaoqi.pairesume.dto.ReviseTaskCreateDTO;
+import com.yizhaoqi.pairesume.entity.ReviseTask;
 import com.yizhaoqi.pairesume.vo.AdminReviseTaskDetailVO;
 import com.yizhaoqi.pairesume.vo.ReviseTaskCreateVO;
 import com.yizhaoqi.pairesume.vo.ReviseTaskStatusVO;
@@ -27,7 +28,7 @@ public interface IReviseService {
     /**
      * 专家查询任务列表
      */
-    Page<Object> getReviseTaskList(Integer status, Pageable pageable);
+    Page<ReviseTask> getReviseTaskList(Integer status, Pageable pageable);
 
     /**
      * 专家查看任务详情（并初始化修改记录）
