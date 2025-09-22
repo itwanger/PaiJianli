@@ -1,7 +1,6 @@
 package com.yizhaoqi.pairesume.service;
 
 import com.yizhaoqi.pairesume.dto.EmailSendCodeDTO;
-import com.yizhaoqi.pairesume.dto.EmailVerifyDTO;
 import com.yizhaoqi.pairesume.dto.LoginDTO;
 import com.yizhaoqi.pairesume.dto.PasswordForgotDTO;
 import com.yizhaoqi.pairesume.dto.PasswordResetDTO;
@@ -41,13 +40,6 @@ public interface IAuthService {
      * @param emailSendCodeDTO 包含邮箱信息的 DTO
      */
     void sendEmailVerificationCode(EmailSendCodeDTO emailSendCodeDTO);
-
-    /**
-     * 校验邮箱验证码并激活账户
-     *
-     * @param emailVerifyDTO 包含邮箱和验证码的 DTO
-     */
-    void verifyEmailCode(EmailVerifyDTO emailVerifyDTO);
 
     /**
      * 用户退出登录

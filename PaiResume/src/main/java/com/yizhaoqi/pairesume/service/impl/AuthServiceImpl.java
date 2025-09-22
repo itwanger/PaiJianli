@@ -5,7 +5,6 @@ import com.yizhaoqi.pairesume.common.exception.ServiceException;
 import com.yizhaoqi.pairesume.common.utils.JwtUtil;
 import com.yizhaoqi.pairesume.common.utils.RedisUtil;
 import com.yizhaoqi.pairesume.dto.EmailSendCodeDTO;
-import com.yizhaoqi.pairesume.dto.EmailVerifyDTO;
 import com.yizhaoqi.pairesume.dto.LoginDTO;
 import com.yizhaoqi.pairesume.dto.PasswordForgotDTO;
 import com.yizhaoqi.pairesume.dto.PasswordResetDTO;
@@ -59,18 +58,25 @@ public class AuthServiceImpl implements IAuthService {
             throw new ServiceException("邮箱已注册", 1001);
         }
 
-        // 2. 创建用户实体
+        // 2. 校验验证码
+        String redisKey = RedisKeys.EMAIL_REGISTER_CODE_KEY + registerDTO.getEmail();
+        String storedCode = redisUtil.get(redisKey);
+        if (storedCode == null || !storedCode.equals(registerDTO.getCode())) {
+            throw new ServiceException("验证码错误或已过期", 3002);
+        }
+
+        // 3. 创建用户实体
         User user = new User();
         user.setEmail(registerDTO.getEmail());
-        // 密码加密
         user.setPasswordHash(passwordEncoder.encode(registerDTO.getPassword()));
-        // 默认角色和状态在User实体中已设置
+        user.setStatus(User.Status.ACTIVE); // 直接设置为激活状态
+        user.setRole(User.Role.USER); // 默认角色
 
-        // 3. 保存到数据库
+        // 4. 保存到数据库
         userRepository.save(user);
 
-        // 4. 发送激活邮件
-        sendEmailVerificationCode(new EmailSendCodeDTO(user.getEmail()));
+        // 5. 从 Redis 中删除已使用的验证码
+        redisUtil.delete(redisKey);
     }
 
     @Override
@@ -164,56 +170,26 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public void sendEmailVerificationCode(EmailSendCodeDTO emailSendCodeDTO) {
         String email = emailSendCodeDTO.getEmail();
-        // 1. 校验用户是否存在且状态为 PENDING
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ServiceException("用户不存在")); // 出于安全，不明确提示用户是否存在
-
-        if (user.getStatus() != User.Status.PENDING) {
-            throw new ServiceException("账户状态异常，无需重复激活");
+        // 1. 检查邮箱是否已注册
+        if (userRepository.existsByEmail(email)) {
+            throw new ServiceException("邮箱已注册", 1001);
         }
 
-        // 2. TODO: 增加防刷校验，例如检查60秒内是否重复发送
+        // 2. TODO: 增加防刷校验
 
         // 3. 生成6位随机数字验证码
         String code = String.format("%06d", new SecureRandom().nextInt(999999));
 
-        // 4. 将验证码存入 Redis，有效期5分钟
+        // 4. 将验证码存入 Redis，用于注册校验，有效期5分钟
         redisUtil.set(RedisKeys.EMAIL_REGISTER_CODE_KEY + email, code, 5, TimeUnit.MINUTES);
 
         // 5. 发送邮件
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailFrom);
         message.setTo(email);
-        message.setSubject("【派简历】邮箱激活验证码");
-        message.setText("您的激活验证码是：" + code + "，有效期为5分钟。");
+        message.setSubject("【派简历】注册验证码");
+        message.setText("您的注册验证码是：" + code + "，有效期为5分钟。");
         mailSender.send(message);
-    }
-
-    @Override
-    public void verifyEmailCode(EmailVerifyDTO emailVerifyDTO) {
-        String email = emailVerifyDTO.getEmail();
-        String code = emailVerifyDTO.getCode();
-
-        // 1. 从 Redis 中获取验证码
-        String redisCode = redisUtil.get(RedisKeys.EMAIL_REGISTER_CODE_KEY + email);
-
-        // 2. 校验验证码
-        if (redisCode == null) {
-            throw new ServiceException("验证码已过期", 3003);
-        }
-        if (!redisCode.equals(code)) {
-            // TODO: 增加错误次数过多校验
-            throw new ServiceException("验证码错误", 3002);
-        }
-
-        // 3. 更新用户状态为 ACTIVE
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ServiceException("用户不存在")); // 理论上此时用户一定存在
-        user.setStatus(User.Status.ACTIVE);
-        userRepository.save(user);
-
-        // 4. 从 Redis 中删除验证码
-        redisUtil.delete(RedisKeys.EMAIL_REGISTER_CODE_KEY + email);
     }
 
     @Override
@@ -299,7 +275,7 @@ public class AuthServiceImpl implements IAuthService {
 
             // 5. 发送邮件
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("your_email@example.com"); // TODO: 从配置文件读取
+            message.setFrom(emailFrom); 
             message.setTo(email);
             message.setSubject("【派简历】密码重置验证码");
             message.setText("您的密码重置验证码是：" + code + "，有效期为5分钟。");

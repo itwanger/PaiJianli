@@ -2,7 +2,6 @@ package com.yizhaoqi.pairesume.controller;
 
 import com.yizhaoqi.pairesume.common.domain.R;
 import com.yizhaoqi.pairesume.dto.EmailSendCodeDTO;
-import com.yizhaoqi.pairesume.dto.EmailVerifyDTO;
 import com.yizhaoqi.pairesume.dto.LoginDTO;
 import com.yizhaoqi.pairesume.dto.PasswordForgotDTO;
 import com.yizhaoqi.pairesume.dto.PasswordResetDTO;
@@ -33,7 +32,7 @@ public class AuthController {
     @PostMapping("/register")
     public R<?> register(@Valid @RequestBody RegisterDTO registerDTO) {
         authService.register(registerDTO);
-        return R.ok(null, "Registered successfully, please verify your email");
+        return R.ok(null, "注册成功");
     }
 
     /**
@@ -51,16 +50,7 @@ public class AuthController {
     @PostMapping("/email/send-code")
     public R<?> sendEmailCode(@Valid @RequestBody EmailSendCodeDTO emailSendCodeDTO) {
         authService.sendEmailVerificationCode(emailSendCodeDTO);
-        return R.ok(null, "如果该邮箱已注册，验证码邮件将发送到您的邮箱");
-    }
-
-    /**
-     * 校验邮箱验证码
-     */
-    @PostMapping("/email/verify-code")
-    public R<?> verifyEmailCode(@Valid @RequestBody EmailVerifyDTO emailVerifyDTO) {
-        authService.verifyEmailCode(emailVerifyDTO);
-        return R.ok(null, "邮箱验证成功");
+        return R.ok(null, "验证码已发送，请注意查收");
     }
 
     /**
