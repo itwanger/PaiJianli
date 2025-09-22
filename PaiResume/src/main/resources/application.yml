@@ -29,7 +29,7 @@ spring:
     host: smtp.qq.com # todo: change to your mail server
     port: 587
     username: your_email@example.com # todo: change to your email username
-    password: your_email_password # todo: change to your email password
+    password: your_email_password # todo: QQ邮箱授权码
     properties:
       mail:
         smtp:
