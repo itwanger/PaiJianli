@@ -20,8 +20,10 @@ public class GlobalExceptionHandler {
     public R<?> handleServiceException(ServiceException e) {
         log.error(e.getMessage(), e);
         if (e.getCode() != null) {
+            // 使用 ServiceException 的 code 作为响应的 code
             return R.fail(e.getCode(), e.getMessage());
         }
+        // 如果 ServiceException 没有 code，则使用默认的失败响应
         return R.fail(e.getMessage());
     }
 

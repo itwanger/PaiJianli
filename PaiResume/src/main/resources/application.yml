@@ -1,3 +1,6 @@
+server:
+  address: 127.0.0.1   # 只监听本机，如果要外网访问可以写 0.0.0.0
+  port: 8081
 spring:
   application:
     name: PaiResume

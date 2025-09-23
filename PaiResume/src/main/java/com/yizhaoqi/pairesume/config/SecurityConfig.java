@@ -74,7 +74,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 允许匿名访问的公共路径
                         .requestMatchers(
-                                "/auth/**",
+                                "/auth/register",
+                                "/auth/login",
+                                "/auth/email/send-code",
+                                "/auth/password/forgot",
+                                "/auth/password/reset",
+                                "/auth/refresh-token",
                                 "/admin/login",
                                 "/pay/callback"
                         ).permitAll()

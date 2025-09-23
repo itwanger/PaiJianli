@@ -1,6 +1,8 @@
 package com.yizhaoqi.pairesume.common.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -9,7 +11,9 @@ import java.io.Serializable;
  *
  * @param <T>
  */
-@Data
+@Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class R<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -17,56 +21,53 @@ public class R<T> implements Serializable {
     /**
      * 成功
      */
-    public static final int SUCCESS = 0;
+    public static final int SUCCESS = 200;
 
     /**
      * 失败
      */
     public static final int FAIL = 500;
 
-    private int code;
+    private Integer code;
 
     private String msg;
 
     private T data;
 
+    public R() {}
+
+    public R(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    public R(Integer code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+    }
+
     public static <T> R<T> ok() {
-        return restResult(null, SUCCESS, "操作成功");
+        return new R<>(SUCCESS, "操作成功");
     }
 
     public static <T> R<T> ok(T data) {
-        return restResult(data, SUCCESS, "操作成功");
+        return new R<>(SUCCESS, "操作成功", data);
+    }
+
+    public static <T> R<T> ok(String msg) {
+        return new R<>(SUCCESS, msg, null);
     }
 
     public static <T> R<T> ok(T data, String msg) {
-        return restResult(data, SUCCESS, msg);
-    }
-
-    public static <T> R<T> fail() {
-        return restResult(null, FAIL, "操作失败");
+        return new R<>(SUCCESS, msg, data);
     }
 
     public static <T> R<T> fail(String msg) {
-        return restResult(null, FAIL, msg);
+        return new R<>(500, msg, null);
     }
 
-    public static <T> R<T> fail(T data) {
-        return restResult(data, FAIL, "操作失败");
-    }
-
-    public static <T> R<T> fail(T data, String msg) {
-        return restResult(data, FAIL, msg);
-    }
-
-    public static <T> R<T> fail(int code, String msg) {
-        return restResult(null, code, msg);
-    }
-
-    private static <T> R<T> restResult(T data, int code, String msg) {
-        R<T> apiResult = new R<>();
-        apiResult.setCode(code);
-        apiResult.setData(data);
-        apiResult.setMsg(msg);
-        return apiResult;
+    public static <T> R<T> fail(Integer code, String msg) {
+        return new R<>(code, msg);
     }
 }

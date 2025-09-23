@@ -32,7 +32,7 @@ public class AuthController {
     @PostMapping("/register")
     public R<?> register(@Valid @RequestBody RegisterDTO registerDTO) {
         authService.register(registerDTO);
-        return R.ok(null, "注册成功");
+        return R.ok( "注册成功");
     }
 
     /**
@@ -50,7 +50,7 @@ public class AuthController {
     @PostMapping("/email/send-code")
     public R<?> sendEmailCode(@Valid @RequestBody EmailSendCodeDTO emailSendCodeDTO) {
         authService.sendEmailVerificationCode(emailSendCodeDTO);
-        return R.ok(null, "验证码已发送，请注意查收");
+        return R.ok("验证码已发送，请注意查收");
     }
 
     /**
@@ -63,7 +63,7 @@ public class AuthController {
             String accessToken = authHeader.substring(7);
             authService.logout(accessToken);
         }
-        return R.ok(null, "退出成功");
+        return R.ok("退出成功");
     }
 
     /**
@@ -81,7 +81,7 @@ public class AuthController {
     @PostMapping("/password/forgot")
     public R<?> forgotPassword(@Valid @RequestBody PasswordForgotDTO passwordForgotDTO) {
         authService.sendPasswordResetCode(passwordForgotDTO);
-        return R.ok(null, "如果该邮箱已注册，一封密码重置邮件将发送到您的邮箱");
+        return R.ok("如果该邮箱已注册，一封密码重置邮件将发送到您的邮箱");
     }
 
     /**
@@ -90,6 +90,6 @@ public class AuthController {
     @PostMapping("/password/reset")
     public R<?> resetPassword(@Valid @RequestBody PasswordResetDTO passwordResetDTO) {
         authService.resetPassword(passwordResetDTO);
-        return R.ok(null, "密码重置成功");
+        return R.ok("密码重置成功");
     }
 }

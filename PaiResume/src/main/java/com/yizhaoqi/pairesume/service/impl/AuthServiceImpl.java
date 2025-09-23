@@ -15,6 +15,7 @@ import com.yizhaoqi.pairesume.repository.UserRepository;
 import com.yizhaoqi.pairesume.service.IAuthService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements IAuthService {
 
     private final UserRepository userRepository;
@@ -81,11 +83,14 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public Map<String, String> login(LoginDTO loginDTO) {
-        // 1. 使用 AuthenticationManager 进行用户认证
-        // 这一步会自动调用 UserDetailsService 加载用户信息，并比对密码
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+            );
+        } catch (AuthenticationException e) {
+            log.error("用户 '{}' 登录失败", loginDTO.getEmail(), e);
+            throw new ServiceException("登录失败，账号或密码错误", 2001); // 将原始异常重新抛出，由全局异常处理器统一处理
+        }
 
         // 2. 认证通过后，从数据库获取用户信息
         // 此时可以确定用户是存在的，且密码正确
@@ -170,12 +175,17 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public void sendEmailVerificationCode(EmailSendCodeDTO emailSendCodeDTO) {
         String email = emailSendCodeDTO.getEmail();
-        // 1. 检查邮箱是否已注册
+
+        // 1. 防刷校验：检查60秒内是否重复发送
+        String rateLimitKey = RedisKeys.EMAIL_REGISTER_RATE_LIMIT_KEY + email;
+        if (redisUtil.hasKey(rateLimitKey)) {
+            throw new ServiceException("请求过于频繁，请1分钟后再试", 3001);
+        }
+
+        // 2. 检查邮箱是否已注册
         if (userRepository.existsByEmail(email)) {
             throw new ServiceException("邮箱已注册", 1001);
         }
-
-        // 2. TODO: 增加防刷校验
 
         // 3. 生成6位随机数字验证码
         String code = String.format("%06d", new SecureRandom().nextInt(999999));
@@ -190,6 +200,9 @@ public class AuthServiceImpl implements IAuthService {
         message.setSubject("【派简历】注册验证码");
         message.setText("您的注册验证码是：" + code + "，有效期为5分钟。");
         mailSender.send(message);
+
+        // 6. 发送成功后，设置防刷标记，有效期60秒
+        redisUtil.set(rateLimitKey, "1", 60, TimeUnit.SECONDS);
     }
 
     @Override
@@ -218,7 +231,7 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public Map<String, String> refreshToken(RefreshTokenDTO refreshTokenDTO) {
         String refreshToken = refreshTokenDTO.getRefreshToken();
-        
+
         // 1. 从 refresh token 解析用户 ID
         Long userId = Long.parseLong(jwtUtil.extractUsername(refreshToken));
 
@@ -232,7 +245,7 @@ public class AuthServiceImpl implements IAuthService {
 
         // 3. 检查 refresh token 是否过期
         if (jwtUtil.isTokenExpired(refreshToken)) {
-             redisUtil.delete(redisKey); // 过期就清理掉
+            redisUtil.delete(redisKey); // 过期就清理掉
             throw new ServiceException("Refresh Token 已过期", 6002);
         }
 
@@ -242,7 +255,7 @@ public class AuthServiceImpl implements IAuthService {
 
         // 5. 生成新的 Access Token
         String newAccessToken = jwtUtil.generateAccessToken(user);
-        
+
         // --- Refresh Token Rotation (可选但推荐) ---
         // 为了更高的安全性，我们也可以在这里生成一个新的 Refresh Token
         // String newRefreshToken = jwtUtil.generateRefreshToken(user);
@@ -263,10 +276,14 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public void sendPasswordResetCode(PasswordForgotDTO passwordForgotDTO) {
         String email = passwordForgotDTO.getEmail();
-        // 1. 无论邮箱是否存在，都执行后续流程，防止用户枚举攻击
-        userRepository.findByEmail(email).ifPresent(user -> {
-            // 2. TODO: 增加防刷校验
 
+        // 1. 防刷校验
+        String rateLimitKey = RedisKeys.EMAIL_RESET_PASSWORD_RATE_LIMIT_KEY + email;
+        if (redisUtil.hasKey(rateLimitKey)) {
+            throw new ServiceException("请求过于频繁，请稍后再试", 4003);
+        }
+        // 2. 无论邮箱是否存在，都执行后续流程，防止用户枚举攻击
+        userRepository.findByEmail(email).ifPresent(user -> {
             // 3. 生成6位随机数字验证码
             String code = String.format("%06d", new SecureRandom().nextInt(999999));
 
@@ -275,12 +292,15 @@ public class AuthServiceImpl implements IAuthService {
 
             // 5. 发送邮件
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(emailFrom); 
+            message.setFrom(emailFrom);
             message.setTo(email);
             message.setSubject("【派简历】密码重置验证码");
             message.setText("您的密码重置验证码是：" + code + "，有效期为5分钟。");
             mailSender.send(message);
         });
+        
+        // 6.增加防刷标记，设计为60秒
+        redisUtil.set(rateLimitKey, "1", 60, TimeUnit.SECONDS);
     }
 
     @Override
