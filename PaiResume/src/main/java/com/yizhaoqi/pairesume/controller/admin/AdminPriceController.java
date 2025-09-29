@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/revise")
+@RequestMapping("/api/admin/revise")
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('ADMIN')")
 public class AdminPriceController {

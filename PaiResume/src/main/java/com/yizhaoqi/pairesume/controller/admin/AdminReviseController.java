@@ -14,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/revise/tasks")
+@RequestMapping("/api/admin/revise/tasks")
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('ADMIN')")
 public class AdminReviseController {

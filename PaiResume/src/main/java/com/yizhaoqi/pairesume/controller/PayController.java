@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/pay")
+@RequestMapping("/api/pay")
 @RequiredArgsConstructor
 public class PayController {
 

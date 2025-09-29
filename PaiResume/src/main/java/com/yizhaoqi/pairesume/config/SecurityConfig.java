@@ -74,14 +74,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 允许匿名访问的公共路径
                         .requestMatchers(
-                                "/auth/register",
-                                "/auth/login",
-                                "/auth/email/send-code",
-                                "/auth/password/forgot",
-                                "/auth/password/reset",
-                                "/auth/refresh-token",
-                                "/admin/login",
-                                "/pay/callback"
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/email/send-code",
+                                "/api/auth/password/forgot",
+                                "/api/auth/password/reset",
+                                "/api/auth/refresh-token",
+                                "/api/admin/login",
+                                "/api/pay/callback"
                         ).permitAll()
                         // 需要 ADMIN 权限的路径
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")

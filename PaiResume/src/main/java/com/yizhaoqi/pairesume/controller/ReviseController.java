@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/revise/tasks")
+@RequestMapping("/api/revise/tasks")
 @RequiredArgsConstructor
 public class ReviseController {
 
