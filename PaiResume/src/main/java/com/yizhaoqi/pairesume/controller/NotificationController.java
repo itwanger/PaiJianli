@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class NotificationController {
     private final JwtUtil jwtUtil;
 
     @GetMapping
-    public R<Page<NotificationVO>> getNotifications(@PageableDefault(sort = "createdAt,desc") Pageable pageable, HttpServletRequest request) {
+    public R<Page<NotificationVO>> getNotifications(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, HttpServletRequest request) {
         Optional<Long> userId = RequestUtils.getUserIdFromRequest(request, jwtUtil);
         if (userId.isEmpty()) {
             return R.fail("未认证用户");
